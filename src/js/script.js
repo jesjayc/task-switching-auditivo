@@ -176,42 +176,35 @@ function advance() {
 }
 
 function renderResults(container) {
-    const res = state.results;
-    const d = res.filter(r => r.stage === 'STAGE_1' || r.stage === 'STAGE_2');
-    const a = res.filter(r => r.stage === 'STAGE_3');
-
-    const mean = arr => arr.length ? Math.round(arr.reduce((s, x) => s + x.rt, 0) / arr.length) : 0;
-    const errs = arr => arr.reduce((s, x) => s + x.numErrors, 0);
-
-    const RT_D = mean(d), RT_A = mean(a);
-    const ED = errs(d), EA = errs(a);
-    const switchT = a.filter(r => r.isSwitch), nonSwitch = a.filter(r => !r.isSwitch);
-    const TR = mean(switchT), TnR = mean(nonSwitch);
-    const ER = errs(switchT), EnR = errs(nonSwitch);
-
     container.innerHTML = `
-        <div class="results-card">
-            <h2 style="text-align:center; margin-bottom:1.5rem;">Resultados do Teste</h2>
-            <h3 class="section-label">Performance Geral</h3>
-            <div class="card-group">
-                <div class="metric-card"><h4>RT Médio (Direto)</h4><p>${RT_D} ms</p></div>
-                <div class="metric-card"><h4>Total Erros (Direto)</h4><p>${ED}</p></div>
-                <div class="metric-card"><h4>RT Médio (Alternado)</h4><p>${RT_A} ms</p></div>
-                <div class="metric-card"><h4>Total Erros (Alternado)</h4><p>${EA}</p></div>
-                <div class="metric-card"><h4>Diferença RT (Alt - Dir)</h4><p>${RT_A - RT_D} ms</p></div>
-                <div class="metric-card"><h4>Diferença Erros (Alt - Dir)</h4><p>${EA - ED}</p></div>
-            </div>
-            <h3 class="section-label">Análise de Custo de Troca</h3>
-            <div class="card-group">
-                <div class="metric-card"><h4>RT Troca (TR)</h4><p>${TR} ms</p></div>
-                <div class="metric-card"><h4>RT Não-Troca (TnR)</h4><p>${TnR} ms</p></div>
-                <div class="metric-card"><h4>CTT (TR - TnR)</h4><p>${TR - TnR} ms</p></div>
-                <div class="metric-card"><h4>Erros Troca (ER)</h4><p>${ER}</p></div>
-                <div class="metric-card"><h4>Erros Não-Troca (EnR)</h4><p>${EnR}</p></div>
-                <div class="metric-card"><h4>CTE (ER - EnR)</h4><p>${ER - EnR}</p></div>
-            </div>
+        <div class="card" style="text-align:center;">
+            <h2>Teste Concluído</h2>
+            <p style="margin:1rem 0;">Clique no botão abaixo para baixar o arquivo CSV com os resultados.</p>
+            <button class="btn-action" onclick="downloadCSV()">Baixar Resultados (CSV)</button>
+            <br><br>
             <button class="btn-action btn-restart" onclick="location.reload()">Reiniciar</button>
         </div>`;
+}
+
+function downloadCSV() {
+    const header = ['indice', 'etapa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
+    const rows = state.results.map((r, i) => [
+        i + 1,
+        r.stage,
+        Math.round(r.rt),
+        r.numErrors,
+        r.isSwitch ? 'sim' : 'nao'
+    ]);
+    const csv = [header, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `resultados-task-switching-auditivo-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 render();
