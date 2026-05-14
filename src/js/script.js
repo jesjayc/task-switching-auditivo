@@ -7,8 +7,14 @@ const state = {
     errorsInTrial: 0,
     rapportNumber: [1, 7, 9],
     rapportAttempts: 0,
-    pendingStage: null
+    pendingStage: null,
+    aborted: false,
+    currentAudio: null
 };
+
+const ABORT_CODE = "end42";
+let abortBuffer = "";
+let abortBufferTimer = null;
 
 const DEMO_TRIALS = {
     STAGE_1: [
@@ -183,12 +189,9 @@ function render() {
         const trial = state.trials[state.currentTrial];
         container.innerHTML = `
             <div class="test-icon" id="feedback-icon">🔊</div>
-            <div class="key-hints">
-                <div class="key-box" id="key-a"><b>A</b><span>PAR<br>ou &lt; 5</span></div>
-                <div class="key-box" id="key-l"><b>L</b><span>ÍMPAR<br>ou &gt; 5</span></div>
-            </div>`;
+            <div class="key-hints">${getKeyHintsHTML(state.stage)}</div>`;
         playAudio(trial.num, trial.voice);
-    } 
+    }
     else if (state.stage === 'RESULTS') {
         renderResults(container);
     }
@@ -203,15 +206,39 @@ function renderInstructions(container) {
     else if (state.stage.endsWith('_OFICIAL_INSTR')) templateId = 'oficial-transition-template';
     const template = document.getElementById(templateId);
     container.innerHTML = template.innerHTML;
+    if (state.stage.endsWith('_OFICIAL_INSTR')) {
+        const hints = container.querySelector('.key-hints');
+        if (hints) hints.innerHTML = getKeyHintsHTML(state.stage);
+    }
+}
+
+function getKeyHintsHTML(stage) {
+    if (stage.startsWith('STAGE_1')) {
+        return `
+            <div class="key-box" id="key-a"><b>A</b><span>PAR</span></div>
+            <div class="key-box" id="key-l"><b>L</b><span>ÍMPAR</span></div>`;
+    }
+    if (stage.startsWith('STAGE_2')) {
+        return `
+            <div class="key-box" id="key-a"><b>A</b><span>MENOR &lt; 5</span></div>
+            <div class="key-box" id="key-l"><b>L</b><span>MAIOR &gt; 5</span></div>`;
+    }
+    return `
+        <div class="key-box" id="key-a"><b>A</b><span>PAR<br>ou &lt; 5</span></div>
+        <div class="key-box" id="key-l"><b>L</b><span>ÍMPAR<br>ou &gt; 5</span></div>`;
 }
 
 function playAudio(nums, voice) {
+    if (state.aborted) return;
     if (!Array.isArray(nums)) nums = [nums];
     let index = 0;
     const playNext = () => {
+        if (state.aborted) return;
         if (index < nums.length) {
             const audio = new Audio(`src/audio/${voice}/${nums[index]}.mp3`);
+            state.currentAudio = audio;
             const proceed = () => {
+                if (state.aborted) return;
                 index++;
                 if (index < nums.length) {
                     setTimeout(playNext, 500);
@@ -300,6 +327,7 @@ window.addEventListener('keydown', (e) => {
         });
 
         setTimeout(() => {
+            if (state.aborted) return;
             btn.classList.remove('active-press', 'success');
             state.errorsInTrial = 0; state.currentTrial++;
             if (state.currentTrial < state.trials.length) render();
@@ -311,8 +339,10 @@ window.addEventListener('keydown', (e) => {
         document.getElementById('feedback-icon').classList.add('shake');
         new Audio('src/audio/error.mp3').play();
         setTimeout(() => {
+            if (state.aborted) return;
             btn.classList.remove('active-press', 'fail');
-            document.getElementById('feedback-icon').classList.remove('shake');
+            const icon = document.getElementById('feedback-icon');
+            if (icon) icon.classList.remove('shake');
         }, 300);
     }
 });
@@ -345,6 +375,33 @@ function renderResults(container) {
             <button class="btn-action btn-restart" onclick="location.reload()">Reiniciar</button>
         </div>`;
 }
+
+function abortTest() {
+    if (!state.results.length) {
+        location.reload();
+        return;
+    }
+    state.aborted = true;
+    if (state.currentAudio) {
+        state.currentAudio.onended = null;
+        state.currentAudio.onerror = null;
+        try { state.currentAudio.pause(); } catch (_) {}
+        state.currentAudio = null;
+    }
+    state.stage = 'RESULTS';
+    render();
+}
+
+window.addEventListener('keydown', (e) => {
+    if (e.key.length !== 1 || !/[a-z0-9]/i.test(e.key)) return;
+    abortBuffer = (abortBuffer + e.key.toLowerCase()).slice(-ABORT_CODE.length);
+    clearTimeout(abortBufferTimer);
+    abortBufferTimer = setTimeout(() => { abortBuffer = ""; }, 2000);
+    if (abortBuffer === ABORT_CODE) {
+        abortBuffer = "";
+        abortTest();
+    }
+});
 
 function downloadCSV() {
     const header = ['indice', 'etapa', 'fase', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
