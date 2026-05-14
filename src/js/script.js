@@ -404,14 +404,13 @@ window.addEventListener('keydown', (e) => {
 });
 
 function downloadCSV() {
-    const header = ['indice', 'etapa', 'fase', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
-    const rows = state.results.map((r, i) => {
-        const isOfficial = r.stage.endsWith('_OFICIAL');
+    const fields = ['indice', 'etapa', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
+    const officialResults = state.results.filter(r => r.stage.endsWith('_OFICIAL'));
+    const rows = officialResults.map((r, i) => {
         const etapa = r.stage.replace('STAGE_', '').replace('_OFICIAL', '');
         return [
             i + 1,
             etapa,
-            isOfficial ? 'oficial' : 'treino',
             r.num,
             r.voice,
             r.task ?? '',
@@ -420,7 +419,9 @@ function downloadCSV() {
             r.isSwitch ? 'sim' : 'nao'
         ];
     });
-    const csv = [header, ...rows].map(row => row.join(',')).join('\n');
+    const headerRow = ['campo', ...rows.map((_, i) => i + 1)];
+    const fieldRows = fields.map((field, fi) => [field, ...rows.map(row => row[fi])]);
+    const csv = [headerRow, ...fieldRows].map(row => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
