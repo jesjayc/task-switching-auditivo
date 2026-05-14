@@ -23,13 +23,149 @@ const DEMO_TRIALS = {
     ],
     STAGE_3: [
         { num: 2, voice: 'feminina', isSwitch: true },
-        { num: 6, voice: 'masculina', isSwitch: true }, 
+        { num: 6, voice: 'masculina', isSwitch: true },
         { num: 4, voice: 'masculina', isSwitch: false },
         { num: 2, voice: 'feminina', isSwitch: true },
         { num: 9, voice: 'feminina', isSwitch: false },
         { num: 1, voice: 'masculina', isSwitch: true }
     ]
 };
+
+const OFFICIAL_TRIALS = {
+    STAGE_1: [
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 3, voice: 'masculina', isSwitch: false },
+        { num: 4, voice: 'feminina', isSwitch: false }, { num: 1, voice: 'masculina', isSwitch: false },
+        { num: 6, voice: 'feminina', isSwitch: false }, { num: 8, voice: 'feminina', isSwitch: false },
+        { num: 9, voice: 'masculina', isSwitch: false }, { num: 2, voice: 'feminina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 3, voice: 'masculina', isSwitch: false },
+        { num: 6, voice: 'feminina', isSwitch: false }, { num: 1, voice: 'masculina', isSwitch: false },
+        { num: 8, voice: 'feminina', isSwitch: false }, { num: 4, voice: 'feminina', isSwitch: false },
+        { num: 9, voice: 'masculina', isSwitch: false }, { num: 2, voice: 'feminina', isSwitch: false },
+        { num: 6, voice: 'feminina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 2, voice: 'feminina', isSwitch: false }, { num: 1, voice: 'masculina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 3, voice: 'masculina', isSwitch: false },
+        { num: 4, voice: 'feminina', isSwitch: false }, { num: 8, voice: 'feminina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 6, voice: 'feminina', isSwitch: false },
+        { num: 8, voice: 'feminina', isSwitch: false }, { num: 3, voice: 'masculina', isSwitch: false },
+        { num: 4, voice: 'feminina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 1, voice: 'masculina', isSwitch: false }, { num: 8, voice: 'feminina', isSwitch: false },
+        { num: 9, voice: 'masculina', isSwitch: false }, { num: 4, voice: 'feminina', isSwitch: false },
+        { num: 2, voice: 'feminina', isSwitch: false }, { num: 1, voice: 'masculina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 3, voice: 'masculina', isSwitch: false },
+        { num: 6, voice: 'feminina', isSwitch: false }, { num: 2, voice: 'feminina', isSwitch: false }
+    ],
+    STAGE_2: [
+        { num: 8, voice: 'masculina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 6, voice: 'masculina', isSwitch: false },
+        { num: 3, voice: 'feminina', isSwitch: false }, { num: 1, voice: 'feminina', isSwitch: false },
+        { num: 2, voice: 'feminina', isSwitch: false }, { num: 4, voice: 'feminina', isSwitch: false },
+        { num: 8, voice: 'masculina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 3, voice: 'feminina', isSwitch: false }, { num: 6, voice: 'masculina', isSwitch: false },
+        { num: 1, voice: 'feminina', isSwitch: false }, { num: 7, voice: 'masculina', isSwitch: false },
+        { num: 2, voice: 'feminina', isSwitch: false }, { num: 4, voice: 'feminina', isSwitch: false },
+        { num: 3, voice: 'feminina', isSwitch: false }, { num: 2, voice: 'feminina', isSwitch: false },
+        { num: 4, voice: 'feminina', isSwitch: false }, { num: 6, voice: 'masculina', isSwitch: false },
+        { num: 8, voice: 'masculina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 1, voice: 'feminina', isSwitch: false },
+        { num: 8, voice: 'masculina', isSwitch: false }, { num: 3, voice: 'feminina', isSwitch: false },
+        { num: 1, voice: 'feminina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 7, voice: 'masculina', isSwitch: false }, { num: 2, voice: 'feminina', isSwitch: false },
+        { num: 6, voice: 'masculina', isSwitch: false }, { num: 1, voice: 'feminina', isSwitch: false },
+        { num: 2, voice: 'feminina', isSwitch: false }, { num: 7, voice: 'masculina', isSwitch: false },
+        { num: 4, voice: 'feminina', isSwitch: false }, { num: 6, voice: 'masculina', isSwitch: false },
+        { num: 8, voice: 'masculina', isSwitch: false }, { num: 9, voice: 'masculina', isSwitch: false },
+        { num: 3, voice: 'feminina', isSwitch: false }, { num: 4, voice: 'feminina', isSwitch: false }
+    ],
+    STAGE_3: [
+        { num: 9, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 4, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 7, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 2, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 6, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 4, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 6, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 6, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 7, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 8, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 6, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 7, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 3, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 6, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 4, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 7, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 6, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 3, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 4, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 9, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 7, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 6, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 3, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 4, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 9, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 7, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 6, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 4, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 7, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 6, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 4, task: 'par_impar', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'masculina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 6, task: 'maior_menor', isSwitch: true, voice: 'masculina' },
+        { num: 3, task: 'par_impar', isSwitch: true, voice: 'masculina' }
+    ]
+};
+
+function getTrialsForStage(stage) {
+    if (stage.endsWith('_OFICIAL')) {
+        return OFFICIAL_TRIALS[stage.replace('_OFICIAL', '')];
+    }
+    return DEMO_TRIALS[stage];
+}
 
 function render() {
     const container = document.getElementById('screen-container');
@@ -64,6 +200,7 @@ function renderInstructions(container) {
     else if (state.stage === 'STAGE_2_INSTR') templateId = 'stage2-instr-template';
     else if (state.stage === 'STAGE_3_INSTR') templateId = 'stage3-instr-template';
     else if (state.stage === 'POSITIONING') templateId = 'positioning-template';
+    else if (state.stage.endsWith('_OFICIAL_INSTR')) templateId = 'oficial-transition-template';
     const template = document.getElementById(templateId);
     container.innerHTML = template.innerHTML;
 }
@@ -117,7 +254,16 @@ window.addEventListener('keydown', (e) => {
     if (state.stage === 'POSITIONING' && key === ' ') {
         const next = state.pendingStage;
         state.stage = next;
-        state.trials = DEMO_TRIALS[next];
+        state.trials = getTrialsForStage(next);
+        state.currentTrial = 0;
+        render();
+        return;
+    }
+
+    if (state.stage.endsWith('_OFICIAL_INSTR') && key === ' ') {
+        const next = state.stage.replace('_INSTR', '');
+        state.stage = next;
+        state.trials = getTrialsForStage(next);
         state.currentTrial = 0;
         render();
         return;
@@ -143,7 +289,15 @@ window.addEventListener('keydown', (e) => {
     if (isCorrect) {
         btn.classList.add('success');
         const rt = performance.now() - state.startTime;
-        state.results.push({ stage: state.stage, rt, numErrors: state.errorsInTrial, isSwitch: trial.isSwitch });
+        state.results.push({
+            stage: state.stage,
+            num: trial.num,
+            voice: trial.voice,
+            task: trial.task ?? null,
+            rt,
+            numErrors: state.errorsInTrial,
+            isSwitch: trial.isSwitch
+        });
 
         setTimeout(() => {
             btn.classList.remove('active-press', 'success');
@@ -169,9 +323,15 @@ function validate(trial, key) {
 }
 
 function advance() {
-    if (state.stage === 'STAGE_1') state.stage = 'STAGE_2_INSTR';
-    else if (state.stage === 'STAGE_2') state.stage = 'STAGE_3_INSTR';
-    else state.stage = 'RESULTS';
+    const nextStage = {
+        'STAGE_1': 'STAGE_1_OFICIAL_INSTR',
+        'STAGE_1_OFICIAL': 'STAGE_2_INSTR',
+        'STAGE_2': 'STAGE_2_OFICIAL_INSTR',
+        'STAGE_2_OFICIAL': 'STAGE_3_INSTR',
+        'STAGE_3': 'STAGE_3_OFICIAL_INSTR',
+        'STAGE_3_OFICIAL': 'RESULTS'
+    }[state.stage] ?? 'RESULTS';
+    state.stage = nextStage;
     render();
 }
 
@@ -187,14 +347,22 @@ function renderResults(container) {
 }
 
 function downloadCSV() {
-    const header = ['indice', 'etapa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
-    const rows = state.results.map((r, i) => [
-        i + 1,
-        r.stage,
-        Math.round(r.rt),
-        r.numErrors,
-        r.isSwitch ? 'sim' : 'nao'
-    ]);
+    const header = ['indice', 'etapa', 'fase', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
+    const rows = state.results.map((r, i) => {
+        const isOfficial = r.stage.endsWith('_OFICIAL');
+        const etapa = r.stage.replace('STAGE_', '').replace('_OFICIAL', '');
+        return [
+            i + 1,
+            etapa,
+            isOfficial ? 'oficial' : 'treino',
+            r.num,
+            r.voice,
+            r.task ?? '',
+            Math.round(r.rt),
+            r.numErrors,
+            r.isSwitch ? 'sim' : 'nao'
+        ];
+    });
     const csv = [header, ...rows].map(row => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
