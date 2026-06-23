@@ -10,79 +10,154 @@
     <div id="app">
         <div id="screen-container"></div>
     </div>
-    <template id="audio-test-template">
-        <div class="card">
-            <h2>Teste de Áudio</h2>
-            <p>Escute os áudios clicando no botão e digite os números ditos separados por espaço</p>
-            <button class="btn-action" onclick="playRapportAudio()">Ouvir Áudio</button><br>
-            <input type="text" id="rapport-in" class="rapport-input" placeholder="Digite aqui"><br>
-            <button class="btn-action" onclick="checkRapport()">Validar</button>
-            <p id="rapport-msg" style="color:var(--error); font-weight:bold;"></p>
-        </div>
-    </template>
+
     <template id="stage1-instr-template">
-        <div class="card">
-            <h2>Etapa 1: Par x Ímpar</h2>
-            <p>Para a primeira etapa do teste você escutará uma voz MASCULINA falar uma série de números, um de cada vez.</p>
-            <p>Sua tarefa é decidir o mais rápido possível se este número é <strong>PAR</strong> ou <strong>ÍMPAR</strong>.</p>
-            <div class="key-hints">
-                <div class="key-box"><b>A</b><span>PAR</span></div>
-                <div class="key-box"><b>L</b><span>ÍMPAR</span></div>
+        <div class="screen-container">
+            <h2 class="title">Etapa 1: Treino</h2>
+            <div class="instructions-content" style="text-align: left;">
+                <p style="text-align: center;">Para a primeira etapa do teste você escutará uma voz MASCULINA falar uma série de números, um de cada vez.</p>
+                <p style="text-align: center; margin-bottom: 20px;">Sua tarefa é decidir o mais rápido possível se este número é <strong>PAR</strong> ou <strong>ÍMPAR</strong>.</p>
+                
+                <div class="keys-info">
+                    <div>
+                        <p>Pressione a tecla</p>
+                        <kbd>A</kbd>
+                        <p>para <strong>PAR</strong></p>
+                    </div>
+                    <div>
+                        <p>Pressione a tecla</p>
+                        <kbd>L</kbd>
+                        <p>para <strong>ÍMPAR</strong></p>
+                    </div>
+                </div>
+
+                <div class="important-section">
+                    <h3>⚠️ IMPORTANTE</h3>
+                    <ul style="list-style: none; padding: 0; max-width: 480px; margin: 0 auto; text-align: center; color: var(--text-secondary); font-size: 0.95rem;">
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--text-light);">Responda da forma mais rápida e precisa que conseguir.</strong></li>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--text-light);">Se você errar, um sinal sonoro irá soar.</strong></li>
+                        <li><strong style="color: var(--text-light);">Simplesmente corrija a sua resposta e continue o teste.</strong></li>
+                    </ul>
+                </div>
             </div>
-            <p>Responda da forma mais rápida e precisa que conseguir. Se você errar, um sinal sonoro irá soar. Simplesmente corrija a sua resposta e continue.</p>
-            <p><b>Quando estiver preparado pressione ESPAÇO para iniciar.</b></p>
+            <div class="start-prompt">
+                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o treino.</p>
+            </div>
         </div>
     </template>
+
     <template id="stage2-instr-template">
-        <div class="card">
-            <h2>Etapa 2: Menor x Maior</h2>
-            <p>Para a próxima etapa do teste você escutará uma voz FEMININA falar uma série de números, um de cada vez.</p>
-            <p>Pressione a tecla <b>A</b> se o número for <strong>MENOR QUE 5</strong>.<br>Pressione a tecla <b>L</b> se o número for <strong>MAIOR QUE 5</strong>.</p>
-            <div class="key-hints">
-                <div class="key-box"><b>A</b><span>MENOR &lt; 5</span></div>
-                <div class="key-box"><b>L</b><span>MAIOR &gt; 5</span></div>
+        <div class="screen-container">
+            <h2 class="title">Etapa 2: Treino</h2>
+            <div class="instructions-content" style="text-align: left;">
+                <p style="text-align: center;">Para a próxima etapa do teste você escutará uma voz FEMININA falar uma série de números, um de cada vez.</p>
+                <p style="text-align: center; margin-bottom: 20px;">Sua tarefa é decidir se o número é <strong>MENOR</strong> ou <strong>MAIOR</strong> que 5.</p>
+                
+                <div class="keys-info">
+                    <div>
+                        <p>Pressione a tecla</p>
+                        <kbd>A</kbd>
+                        <p>se <strong>MENOR &lt; 5</strong></p>
+                    </div>
+                    <div>
+                        <p>Pressione a tecla</p>
+                        <kbd>L</kbd>
+                        <p>se <strong>MAIOR &gt; 5</strong></p>
+                    </div>
+                </div>
+
+                <div class="important-section">
+                    <h3>⚠️ IMPORTANTE</h3>
+                    <ul style="list-style: none; padding: 0; max-width: 480px; margin: 0 auto; text-align: center; color: var(--text-secondary); font-size: 0.95rem;">
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--text-light);">Responda da forma mais rápida e precisa que conseguir.</strong></li>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--text-light);">Se você errar, um sinal sonoro irá soar.</strong></li>
+                        <li><strong style="color: var(--text-light);">Simplesmente corrija a sua resposta e continue o teste.</strong></li>
+                    </ul>
+                </div>
             </div>
-            <p>Responda da forma mais rápida e precisa que conseguir. Se você errar, um sinal sonoro irá soar. Simplesmente corrija a sua resposta e continue.</p>
-            <p><b>Quando estiver preparado pressione ESPAÇO para iniciar.</b></p>
+            <div class="start-prompt">
+                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o treino.</p>
+            </div>
         </div>
     </template>
+
     <template id="stage3-instr-template">
-        <div class="card">
-            <h2>Etapa 3: Alternando Tarefas</h2>
-            <p>Agora vamos combinar as duas tarefas em uma:</p>
-            <p><b>Se a voz for MASCULINA:</b> Classifique o número entre PAR ou ÍMPAR.<br>
-            <b>Se a voz for FEMININA:</b> Classifique o número entre MENOR ou MAIOR que 5.</p>
-            <div class="key-hints">
-                <div class="key-box"><b>A</b><span>PAR<br>ou &lt; 5</span></div>
-                <div class="key-box"><b>L</b><span>ÍMPAR<br>ou &gt; 5</span></div>
+        <div class="screen-container">
+            <h2 class="title">Etapa 3: Treino</h2>
+            <div class="instructions-content" style="text-align: left;">
+                <p style="text-align: center; margin-bottom: 20px;">Agora vamos combinar as duas tarefas em uma:</p>
+                
+                <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); width: 45%; text-align: center;">
+                        <span style="color: var(--cyan); font-weight: bold; display: block; margin-bottom: 5px;">VOZ MASCULINA</span>
+                        Classifique entre<br><strong>PAR</strong> ou <strong>ÍMPAR</strong>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); width: 45%; text-align: center;">
+                        <span style="color: #f472b6; font-weight: bold; display: block; margin-bottom: 5px;">VOZ FEMININA</span>
+                        Classifique entre<br><strong>MENOR</strong> ou <strong>MAIOR</strong> que 5
+                    </div>
+                </div>
+
+                <div class="keys-info">
+                    <div>
+                        <p>Pressione a tecla</p>
+                        <kbd>A</kbd>
+                        <p><strong>PAR</strong> ou <strong>&lt; 5</strong></p>
+                    </div>
+                    <div>
+                        <p>Pressione a tecla</p>
+                        <kbd>L</kbd>
+                        <p><strong>ÍMPAR</strong> ou <strong>&gt; 5</strong></p>
+                    </div>
+                </div>
+
+                <div class="important-section">
+                    <h3>⚠️ IMPORTANTE</h3>
+                    <ul style="list-style: none; padding: 0; max-width: 480px; margin: 0 auto; text-align: center; color: var(--text-secondary); font-size: 0.95rem;">
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--text-light);">Responda da forma mais rápida e precisa que conseguir.</strong></li>
+                        <li style="margin-bottom: 8px;"><strong style="color: var(--text-light);">Se você errar, um sinal sonoro irá soar.</strong></li>
+                        <li><strong style="color: var(--text-light);">Simplesmente corrija a sua resposta e continue o teste.</strong></li>
+                    </ul>
+                </div>
             </div>
-            <p>Responda da forma mais rápida e precisa que conseguir. Se você errar, um sinal sonoro irá soar. Simplesmente corrija a sua resposta e continue.</p>
-            <p><b>Quando estiver preparado pressione ESPAÇO para iniciar.</b></p>
+            <div class="start-prompt">
+                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o treino.</p>
+            </div>
         </div>
     </template>
+
     <template id="positioning-template">
-        <div class="card" style="justify-content:center; text-align:center; display:flex; flex-direction:column; align-items:center;">
-            <p style="font-size:1.3rem; margin-bottom:2rem;">
-                Posicione seu indicador esquerdo sobre a tecla <b>A</b> e o direito sobre a tecla <b>L</b>
+        <div class="screen-container" style="justify-content: center;">
+            <p style="font-size: 1.3rem; margin-bottom: 2rem;">
+                Posicione seu indicador esquerdo sobre a tecla <kbd>A</kbd><br>e o direito sobre a tecla <kbd>L</kbd>
             </p>
-            <div class="key-hints">
-                <div class="key-box"><b>A</b><span>←</span></div>
-                <div class="key-box"><b>L</b><span>→</span></div>
+            <div class="keys-info" style="margin-top: 0; margin-bottom: 2rem;">
+                <div><kbd>A</kbd><p style="margin-top: 10px;">Mão Esquerda</p></div>
+                <div><kbd>L</kbd><p style="margin-top: 10px;">Mão Direita</p></div>
             </div>
-            <p style="margin-top:2rem"><b>Pressione ESPAÇO para iniciar.</b></p>
+            <div class="start-prompt" style="margin-top: 10px;">
+                <p>Pressione <kbd>ESPAÇO</kbd> para começar.</p>
+            </div>
         </div>
     </template>
+
     <template id="oficial-transition-template">
-        <div class="card">
-            <h2>Treino Concluído</h2>
-            <p>Agora começa o <strong>teste oficial</strong> desta etapa. As regras são as mesmas do treino.</p>
-            <div class="key-hints">
-                <div class="key-box"><b>A</b><span>PAR<br>ou &lt; 5</span></div>
-                <div class="key-box"><b>L</b><span>ÍMPAR<br>ou &gt; 5</span></div>
+        <div class="screen-container">
+            <h2 class="title">Treino Concluído</h2>
+            <div class="instructions-content" style="text-align: center;">
+                <p style="font-size: 1.1rem; margin-bottom: 30px;">Agora começa o <strong>teste oficial</strong> desta etapa.<br>As regras são exatamente as mesmas do treino.</p>
+                
+                <div class="keys-info">
+                    <div id="transition-key-a-container"></div>
+                    <div id="transition-key-l-container"></div>
+                </div>
             </div>
-            <p><b>Quando estiver preparado pressione ESPAÇO para iniciar o teste oficial.</b></p>
+            <div class="start-prompt">
+                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o teste oficial.</p>
+            </div>
         </div>
     </template>
+
     <audio id="audio-error" src="src/audio/error.mp3"></audio>
     <script src="src/js/script.js"></script>
 </body>
