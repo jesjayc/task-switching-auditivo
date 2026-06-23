@@ -1,12 +1,10 @@
 const state = {
-    stage: 'AUDIO_TEST',
+    stage: 'STAGE_1_INSTR', // programa começa logo no treino da etapa 1
     currentTrial: 0,
     trials: [],
     results: [],
     startTime: 0,
     errorsInTrial: 0,
-    rapportNumber: [1, 7, 9],
-    rapportAttempts: 0,
     pendingStage: null,
     aborted: false,
     currentAudio: null
@@ -177,19 +175,16 @@ function render() {
     const container = document.getElementById('screen-container');
     container.innerHTML = '';
 
-    if (state.stage === 'AUDIO_TEST') {
-        const template = document.getElementById('audio-test-template');
-        const clone = template.content.cloneNode(true);
-        container.appendChild(clone);
-    } 
-    else if (state.stage.includes('_INSTR') || state.stage === 'POSITIONING') {
+    if (state.stage.includes('_INSTR') || state.stage === 'POSITIONING') {
         renderInstructions(container);
     }
     else if (state.stage.startsWith('STAGE_')) {
         const trial = state.trials[state.currentTrial];
         container.innerHTML = `
-            <div class="test-icon" id="feedback-icon">🔊</div>
-            <div class="key-hints">${getKeyHintsHTML(state.stage)}</div>`;
+            <div class="screen-container" style="justify-content: center; background: none; box-shadow: none; border: none;">
+                <div class="test-icon" id="feedback-icon">🔊</div>
+                <div class="keys-info" style="margin-top: 0;">${getKeyHintsHTML(state.stage)}</div>
+            </div>`;
         playAudio(trial.num, trial.voice);
     }
     else if (state.stage === 'RESULTS') {
@@ -204,28 +199,36 @@ function renderInstructions(container) {
     else if (state.stage === 'STAGE_3_INSTR') templateId = 'stage3-instr-template';
     else if (state.stage === 'POSITIONING') templateId = 'positioning-template';
     else if (state.stage.endsWith('_OFICIAL_INSTR')) templateId = 'oficial-transition-template';
+    
     const template = document.getElementById(templateId);
     container.innerHTML = template.innerHTML;
+    
     if (state.stage.endsWith('_OFICIAL_INSTR')) {
-        const hints = container.querySelector('.key-hints');
-        if (hints) hints.innerHTML = getKeyHintsHTML(state.stage);
+        const hints = getKeyHintsHTML(state.stage, true);
+        const aContainer = container.querySelector('#transition-key-a-container');
+        const lContainer = container.querySelector('#transition-key-l-container');
+        if(aContainer && hints.a) aContainer.innerHTML = hints.a;
+        if(lContainer && hints.l) lContainer.innerHTML = hints.l;
     }
 }
 
-function getKeyHintsHTML(stage) {
+// Alterado para gerar HTML compatível com a tag <kbd>
+function getKeyHintsHTML(stage, returnObject = false) {
+    let aHint = '', lHint = '';
+
     if (stage.startsWith('STAGE_1')) {
-        return `
-            <div class="key-box" id="key-a"><b>A</b><span>PAR</span></div>
-            <div class="key-box" id="key-l"><b>L</b><span>ÍMPAR</span></div>`;
+        aHint = `<div class="key-box" id="key-a"><kbd>A</kbd><span>PAR</span></div>`;
+        lHint = `<div class="key-box" id="key-l"><kbd>L</kbd><span>ÍMPAR</span></div>`;
+    } else if (stage.startsWith('STAGE_2')) {
+        aHint = `<div class="key-box" id="key-a"><kbd>A</kbd><span>MENOR &lt; 5</span></div>`;
+        lHint = `<div class="key-box" id="key-l"><kbd>L</kbd><span>MAIOR &gt; 5</span></div>`;
+    } else {
+        aHint = `<div class="key-box" id="key-a"><kbd>A</kbd><span>PAR<br>ou &lt; 5</span></div>`;
+        lHint = `<div class="key-box" id="key-l"><kbd>L</kbd><span>ÍMPAR<br>ou &gt; 5</span></div>`;
     }
-    if (stage.startsWith('STAGE_2')) {
-        return `
-            <div class="key-box" id="key-a"><b>A</b><span>MENOR &lt; 5</span></div>
-            <div class="key-box" id="key-l"><b>L</b><span>MAIOR &gt; 5</span></div>`;
-    }
-    return `
-        <div class="key-box" id="key-a"><b>A</b><span>PAR<br>ou &lt; 5</span></div>
-        <div class="key-box" id="key-l"><b>L</b><span>ÍMPAR<br>ou &gt; 5</span></div>`;
+
+    if (returnObject) return { a: aHint, l: lHint };
+    return aHint + lHint;
 }
 
 function playAudio(nums, voice) {
@@ -258,21 +261,6 @@ function playAudio(nums, voice) {
         }
     };
     playNext();
-}
-
-function playRapportAudio() {
-    playAudio(state.rapportNumber, 'masculina');
-}
-
-function checkRapport() {
-    const val = document.getElementById('rapport-in').value.trim().replace(/\s+/g, '');
-    if (val === '179') {
-        state.stage = 'STAGE_1_INSTR'; render();
-    } else {
-        state.rapportAttempts++;
-        const msg = document.getElementById('rapport-msg');
-        msg.innerText = state.rapportAttempts >= 5 ? "Problema no áudio? Contate o avaliador." : "Tente novamente!";
-    }
 }
 
 window.addEventListener('keydown', (e) => {
@@ -367,12 +355,12 @@ function advance() {
 
 function renderResults(container) {
     container.innerHTML = `
-        <div class="card" style="text-align:center;">
-            <h2>Teste Concluído</h2>
+        <div class="screen-container" style="text-align:center;">
+            <h2 class="title">Teste Concluído</h2>
             <p style="margin:1rem 0;">Clique no botão abaixo para baixar o arquivo CSV com os resultados.</p>
             <button class="btn-action" onclick="downloadCSV()">Baixar Resultados (CSV)</button>
             <br><br>
-            <button class="btn-action btn-restart" onclick="location.reload()">Reiniciar</button>
+            <button class="btn-action" style="background: var(--bg-tertiary); margin-top: 10px;" onclick="location.reload()">Reiniciar</button>
         </div>`;
 }
 
