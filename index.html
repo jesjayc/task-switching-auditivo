@@ -11,6 +11,23 @@
         <div id="screen-container"></div>
     </div>
 
+    <!-- Tela de Teste de Áudio -->
+    <template id="audio-test-template">
+        <div class="screen-container">
+            <h2 class="title" style="font-size: 2.2rem;">Teste de Áudio</h2>
+            <p style="margin-bottom: 20px; font-size: 1.1rem;">Clique no botão para ouvir e selecione os <strong>3 números</strong> ditos abaixo:</p>
+            
+            <button id="btn-play-test" class="btn-action" style="background: var(--border-color); color: var(--text-light); padding: 10px 30px; font-size: 1rem; margin: 0 auto 15px auto;">▶ Reproduzir Áudio</button>
+            
+            <div id="audio-options" class="options-grid"></div>
+            <p id="audio-test-feedback" style="font-weight: bold; min-height: 24px;"></p>
+            
+            <div style="margin-top: 25px; width: 100%;">
+                <button id="btn-start-instructions" class="btn-main hidden" style="background: var(--cyan); color: #000;">TUDO CERTO! VER INSTRUÇÕES (ESPAÇO)</button>
+            </div>
+        </div>
+    </template>
+
     <template id="stage1-instr-template">
         <div class="screen-container">
             <h2 class="title">Etapa 1: Treino</h2>
@@ -41,7 +58,7 @@
                 </div>
             </div>
             <div class="start-prompt">
-                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o treino.</p>
+                <button class="btn-main" id="btn-start-stage">ESTOU PRONTO (ESPAÇO)</button>
             </div>
         </div>
     </template>
@@ -76,7 +93,7 @@
                 </div>
             </div>
             <div class="start-prompt">
-                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o treino.</p>
+                <button class="btn-main" id="btn-start-stage">ESTOU PRONTO (ESPAÇO)</button>
             </div>
         </div>
     </template>
@@ -121,7 +138,7 @@
                 </div>
             </div>
             <div class="start-prompt">
-                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o treino.</p>
+                <button class="btn-main" id="btn-start-stage">ESTOU PRONTO (ESPAÇO)</button>
             </div>
         </div>
     </template>
@@ -135,8 +152,8 @@
                 <div><kbd>A</kbd><p style="margin-top: 10px;">Mão Esquerda</p></div>
                 <div><kbd>L</kbd><p style="margin-top: 10px;">Mão Direita</p></div>
             </div>
-            <div class="start-prompt" style="margin-top: 10px;">
-                <p>Pressione <kbd>ESPAÇO</kbd> para começar.</p>
+            <div class="start-prompt">
+                <button class="btn-main" id="btn-start-stage">COMEÇAR (ESPAÇO)</button>
             </div>
         </div>
     </template>
@@ -153,7 +170,7 @@
                 </div>
             </div>
             <div class="start-prompt">
-                <p>Pressione <kbd>ESPAÇO</kbd> para iniciar o teste oficial.</p>
+                <button class="btn-main" id="btn-start-stage">INICIAR OFICIAL (ESPAÇO)</button>
             </div>
         </div>
     </template>
