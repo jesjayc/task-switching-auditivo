@@ -1,5 +1,5 @@
 const state = {
-    stage: 'AUDIO_TEST', // Voltou a nascer na tela de áudio!
+    stage: 'AUDIO_TEST', // Teste voltou a começar na tela de teste de áudio
     currentTrial: 0,
     trials: [],
     results: [],
@@ -162,7 +162,7 @@ function renderAudioTest(container) {
     const feedback = container.querySelector('#audio-test-feedback');
     const btnNext = container.querySelector('#btn-start-instructions');
 
-    state.audioTest = { playing: false, selected: [], target: [1, 7, 9] };
+    state.audioTest = { playing: false, selected: [], target: [1, 7, 9], played: false };
 
     for(let i=1; i<=9; i++) {
         const btn = document.createElement('button');
@@ -183,13 +183,22 @@ function renderAudioTest(container) {
         grid.appendChild(btn);
     }
 
+    
     btnPlay.onclick = () => {
         if(state.audioTest.playing) return;
         state.audioTest.playing = true;
-        btnPlay.innerHTML = '⏳ Reproduzindo...';
+        
+        btnPlay.disabled = true; 
+        btnPlay.innerHTML = '⏳ REPRODUZINDO...';
+        
         playAudio([1, 7, 9], 'masculina', () => {
             state.audioTest.playing = false;
-            btnPlay.innerHTML = '▶ Reproduzir Novamente';
+            state.audioTest.played = true; // <--- Usuário pode clicar na sequência de números agora
+            
+            btnPlay.disabled = false; 
+            btnPlay.innerHTML = '▶ REPRODUZIR NOVAMENTE';
+            
+            checkAudioTest(feedback, btnNext); // Revalida a seleção
         });
     };
 
@@ -199,7 +208,9 @@ function renderAudioTest(container) {
 function checkAudioTest(feedback, btnNext) {
     if(state.audioTest.selected.length === 3) {
         const isCorrect = state.audioTest.selected.every(n => state.audioTest.target.includes(n));
-        if(isCorrect) {
+        
+        // Agora exige que esteja correto E que o áudio já tenha tocado
+        if(isCorrect && state.audioTest.played) { 
             feedback.textContent = 'Perfeito! Áudio validado.';
             feedback.style.color = 'var(--accent)';
             btnNext.classList.remove('hidden');
