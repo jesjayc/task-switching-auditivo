@@ -79,18 +79,12 @@ kbd {
     font-weight: 600; 
     color: var(--text-light); 
     text-align: center;
-    animation: pulse 1.5s infinite;
 }
 
 .start-prompt kbd { 
     font-size: 1.5rem; /* Aumentado para bater com o Visual */
     padding: 0.5rem 1rem; /* Preenchimento igual ao do Visual */
     min-width: auto; 
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
 }
 
 /* FEEDBACK VISUAL DE CLIQUE NA TELA DE TESTE */
@@ -120,3 +114,51 @@ kbd {
     transition: all 0.1s ease; margin-top: 20px;
 }
 .btn-action:active { transform: translateY(4px); box-shadow: 0 0 0 var(--bg-primary); }
+
+.btn-main {
+    display: inline-block;
+    background: #475569;
+    color: var(--cyan);
+    border: none;
+    padding: 15px 60px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 var(--bg-primary);
+    transition: all 0.1s ease;
+    text-transform: uppercase;
+    width: 100%;
+    margin-top: 15px;
+}
+.btn-main:active { 
+    transform: translateY(4px); 
+    box-shadow: 0 1px 0 var(--bg-primary); 
+}
+
+/* --- GRID DE TESTE DE ÁUDIO --- */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px auto;
+    max-width: 350px;
+}
+.btn-opt {
+    background: var(--bg-tertiary);
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.btn-opt.selected { 
+    background: var(--cyan); 
+    color: #000; 
+    border-color: #fff; 
+}
+.hidden { display: none !important; }
