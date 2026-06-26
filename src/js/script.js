@@ -1,5 +1,5 @@
 const state = {
-    stage: 'STAGE_1_INSTR', // programa começa logo no treino da etapa 1
+    stage: 'AUDIO_TEST', // Voltou a nascer na tela de áudio!
     currentTrial: 0,
     trials: [],
     results: [],
@@ -7,7 +7,8 @@ const state = {
     errorsInTrial: 0,
     pendingStage: null,
     aborted: false,
-    currentAudio: null
+    currentAudio: null,
+    audioTest: { playing: false, selected: [], target: [1, 7, 9] }
 };
 
 const ABORT_CODE = "end42";
@@ -26,12 +27,9 @@ const DEMO_TRIALS = {
         { num: 4, voice: 'feminina', isSwitch: false }, { num: 7, voice: 'feminina', isSwitch: false }
     ],
     STAGE_3: [
-        { num: 2, voice: 'feminina', isSwitch: true },
-        { num: 6, voice: 'masculina', isSwitch: true },
-        { num: 4, voice: 'masculina', isSwitch: false },
-        { num: 2, voice: 'feminina', isSwitch: true },
-        { num: 9, voice: 'feminina', isSwitch: false },
-        { num: 1, voice: 'masculina', isSwitch: true }
+        { num: 2, voice: 'feminina', isSwitch: true }, { num: 6, voice: 'masculina', isSwitch: true },
+        { num: 4, voice: 'masculina', isSwitch: false }, { num: 2, voice: 'feminina', isSwitch: true },
+        { num: 9, voice: 'feminina', isSwitch: false }, { num: 1, voice: 'masculina', isSwitch: true }
     ]
 };
 
@@ -81,86 +79,46 @@ const OFFICIAL_TRIALS = {
         { num: 3, voice: 'feminina', isSwitch: false }, { num: 4, voice: 'feminina', isSwitch: false }
     ],
     STAGE_3: [
-        { num: 9, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 4, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 1, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 7, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 2, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 6, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 9, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 4, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 8, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 8, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 7, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 8, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 7, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 3, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 6, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 4, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 2, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 8, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 1, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 7, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 6, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 3, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 4, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 9, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 8, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 7, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 3, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 4, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 9, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 8, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 1, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 7, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 6, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 4, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 2, task: 'par_impar', isSwitch: false, voice: 'masculina' },
-        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 7, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 6, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 4, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 9, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
-        { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
-        { num: 6, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
-        { num: 3, task: 'par_impar', isSwitch: true, voice: 'masculina' }
+        { num: 9, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 4, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 1, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 7, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 2, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 6, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 9, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 4, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 8, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 7, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 8, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 4, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 7, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 3, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 6, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 4, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 2, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 8, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 1, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 7, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 6, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 3, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 4, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 2, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 9, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 8, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 1, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 7, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 6, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 3, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 4, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 9, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 8, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 1, task: 'par_impar', isSwitch: false, voice: 'masculina' }, { num: 7, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 6, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 3, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 4, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 2, task: 'par_impar', isSwitch: false, voice: 'masculina' },
+        { num: 9, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 7, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 6, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 3, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 4, task: 'par_impar', isSwitch: true, voice: 'masculina' }, { num: 2, task: 'maior_menor', isSwitch: true, voice: 'feminina' },
+        { num: 9, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 8, task: 'maior_menor', isSwitch: false, voice: 'feminina' },
+        { num: 1, task: 'maior_menor', isSwitch: false, voice: 'feminina' }, { num: 7, task: 'par_impar', isSwitch: true, voice: 'masculina' },
+        { num: 6, task: 'maior_menor', isSwitch: true, voice: 'feminina' }, { num: 3, task: 'par_impar', isSwitch: true, voice: 'masculina' }
     ]
 };
 
@@ -175,7 +133,10 @@ function render() {
     const container = document.getElementById('screen-container');
     container.innerHTML = '';
 
-    if (state.stage.includes('_INSTR') || state.stage === 'POSITIONING') {
+    if (state.stage === 'AUDIO_TEST') {
+        renderAudioTest(container);
+    }
+    else if (state.stage.includes('_INSTR') || state.stage === 'POSITIONING') {
         renderInstructions(container);
     }
     else if (state.stage.startsWith('STAGE_')) {
@@ -189,6 +150,67 @@ function render() {
     }
     else if (state.stage === 'RESULTS') {
         renderResults(container);
+    }
+}
+
+function renderAudioTest(container) {
+    const template = document.getElementById('audio-test-template');
+    container.innerHTML = template.innerHTML;
+
+    const btnPlay = container.querySelector('#btn-play-test');
+    const grid = container.querySelector('#audio-options');
+    const feedback = container.querySelector('#audio-test-feedback');
+    const btnNext = container.querySelector('#btn-start-instructions');
+
+    state.audioTest = { playing: false, selected: [], target: [1, 7, 9] };
+
+    for(let i=1; i<=9; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-opt';
+        btn.textContent = i;
+        btn.onclick = () => {
+            if(state.audioTest.selected.includes(i)) {
+                state.audioTest.selected = state.audioTest.selected.filter(n => n !== i);
+                btn.classList.remove('selected');
+            } else {
+                if(state.audioTest.selected.length < 3) {
+                    state.audioTest.selected.push(i);
+                    btn.classList.add('selected');
+                }
+            }
+            checkAudioTest(feedback, btnNext);
+        };
+        grid.appendChild(btn);
+    }
+
+    btnPlay.onclick = () => {
+        if(state.audioTest.playing) return;
+        state.audioTest.playing = true;
+        btnPlay.innerHTML = '⏳ Reproduzindo...';
+        playAudio([1, 7, 9], 'masculina', () => {
+            state.audioTest.playing = false;
+            btnPlay.innerHTML = '▶ Reproduzir Novamente';
+        });
+    };
+
+    btnNext.onclick = handleSpaceOrClick;
+}
+
+function checkAudioTest(feedback, btnNext) {
+    if(state.audioTest.selected.length === 3) {
+        const isCorrect = state.audioTest.selected.every(n => state.audioTest.target.includes(n));
+        if(isCorrect) {
+            feedback.textContent = 'Perfeito! Áudio validado.';
+            feedback.style.color = 'var(--accent)';
+            btnNext.classList.remove('hidden');
+        } else {
+            feedback.textContent = 'Incorreto. Ouça novamente e selecione os 3 números corretos.';
+            feedback.style.color = 'var(--error)';
+            btnNext.classList.add('hidden');
+        }
+    } else {
+        feedback.textContent = '';
+        btnNext.classList.add('hidden');
     }
 }
 
@@ -210,9 +232,51 @@ function renderInstructions(container) {
         if(aContainer && hints.a) aContainer.innerHTML = hints.a;
         if(lContainer && hints.l) lContainer.innerHTML = hints.l;
     }
+
+    const btn = container.querySelector('#btn-start-stage');
+    if (btn) {
+        btn.onclick = handleSpaceOrClick;
+    }
 }
 
-// Alterado para gerar HTML compatível com a tag <kbd>
+// Lógica Unificada para Avançar as Telas (Mouse ou Espaço)
+function handleSpaceOrClick() {
+    if (state.stage === 'AUDIO_TEST') {
+        const btnNext = document.getElementById('btn-start-instructions');
+        if (btnNext && !btnNext.classList.contains('hidden')) {
+            state.stage = 'STAGE_1_INSTR';
+            render();
+        }
+        return;
+    }
+
+    if (state.stage === 'POSITIONING') {
+        const next = state.pendingStage;
+        state.stage = next;
+        state.trials = getTrialsForStage(next);
+        state.currentTrial = 0;
+        render();
+        return;
+    }
+
+    if (state.stage.endsWith('_OFICIAL_INSTR')) {
+        const next = state.stage.replace('_INSTR', '');
+        state.stage = next;
+        state.trials = getTrialsForStage(next);
+        state.currentTrial = 0;
+        render();
+        return;
+    }
+
+    if (state.stage.includes('_INSTR')) {
+        const next = state.stage.replace('_INSTR', '');
+        state.pendingStage = next;
+        state.stage = 'POSITIONING';
+        render();
+        return;
+    }
+}
+
 function getKeyHintsHTML(stage, returnObject = false) {
     let aHint = '', lHint = '';
 
@@ -231,7 +295,8 @@ function getKeyHintsHTML(stage, returnObject = false) {
     return aHint + lHint;
 }
 
-function playAudio(nums, voice) {
+// Adicionado suporte a callback (onComplete) no final do áudio
+function playAudio(nums, voice, onComplete = null) {
     if (state.aborted) return;
     if (!Array.isArray(nums)) nums = [nums];
     let index = 0;
@@ -247,6 +312,7 @@ function playAudio(nums, voice) {
                     setTimeout(playNext, 500);
                 } else {
                     state.startTime = performance.now();
+                    if(onComplete) onComplete();
                 }
             };
             audio.onended = proceed;
@@ -266,29 +332,9 @@ function playAudio(nums, voice) {
 window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
 
-    if (state.stage === 'POSITIONING' && key === ' ') {
-        const next = state.pendingStage;
-        state.stage = next;
-        state.trials = getTrialsForStage(next);
-        state.currentTrial = 0;
-        render();
-        return;
-    }
-
-    if (state.stage.endsWith('_OFICIAL_INSTR') && key === ' ') {
-        const next = state.stage.replace('_INSTR', '');
-        state.stage = next;
-        state.trials = getTrialsForStage(next);
-        state.currentTrial = 0;
-        render();
-        return;
-    }
-
-    if (state.stage.includes('_INSTR') && key === ' ') {
-        const next = state.stage.replace('_INSTR', '');
-        state.pendingStage = next;
-        state.stage = 'POSITIONING';
-        render();
+    // Novo suporte à barra de espaço global
+    if (key === ' ' && (state.stage.includes('_INSTR') || state.stage === 'POSITIONING' || state.stage === 'AUDIO_TEST')) {
+        handleSpaceOrClick();
         return;
     }
 
