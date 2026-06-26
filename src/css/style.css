@@ -136,6 +136,10 @@ kbd {
     transform: translateY(4px); 
     box-shadow: 0 1px 0 var(--bg-primary); 
 }
+.btn-main:disabled, .btn-action:disabled, .space-key-btn:disabled { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+}
 
 /* --- GRID DE TESTE DE ÁUDIO --- */
 .options-grid {
