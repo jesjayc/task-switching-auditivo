@@ -142,7 +142,7 @@ function render() {
     else if (state.stage.startsWith('STAGE_')) {
         const trial = state.trials[state.currentTrial];
         container.innerHTML = `
-            <div class="screen-container" style="justify-content: center; background: none; box-shadow: none; border: none;">
+            <div class="screen-container" style="width: 95vw; max-width: 1350px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div class="test-icon" id="feedback-icon">🔊</div>
                 <div class="keys-info" style="margin-top: 0;">${getKeyHintsHTML(state.stage)}</div>
             </div>`;
@@ -356,10 +356,20 @@ window.addEventListener('keydown', (e) => {
     const trial = state.trials[state.currentTrial];
     const isCorrect = validate(trial, key);
 
+    // O botão afunda (feedback tátil/motor), essencial para UX básica
     if (btn) btn.classList.add('active-press');
 
+    // Identifica se estamos valendo nota (Oficial) ou não (Treino)
+    const isOfficialPhase = state.stage.endsWith('_OFICIAL');
+
     if (isCorrect) {
-        btn.classList.add('success');
+        // --- CENÁRIO 1: RESPOSTA CORRETA ---
+        
+        // Só acende o verde (success) se for TREINO
+        if (!isOfficialPhase) {
+            btn.classList.add('success'); 
+        }
+        
         const rt = performance.now() - state.startTime;
         state.results.push({
             stage: state.stage,
@@ -374,21 +384,55 @@ window.addEventListener('keydown', (e) => {
         setTimeout(() => {
             if (state.aborted) return;
             btn.classList.remove('active-press', 'success');
-            state.errorsInTrial = 0; state.currentTrial++;
+            state.errorsInTrial = 0; 
+            state.currentTrial++;
             if (state.currentTrial < state.trials.length) render();
             else advance();
         }, 150);
+
     } else {
+        // --- CENÁRIO 2: RESPOSTA INCORRETA ---
         state.errorsInTrial++;
-        btn.classList.add('fail');
-        document.getElementById('feedback-icon').classList.add('shake');
-        new Audio('src/audio/error.mp3').play();
-        setTimeout(() => {
-            if (state.aborted) return;
-            btn.classList.remove('active-press', 'fail');
+
+        if (isOfficialPhase) {
+            // == TESTE OFICIAL (Estéril e Silencioso) ==
+            // Grava o erro e avança sem piscar vermelho, sem tremer e sem som.
+            const rt = performance.now() - state.startTime;
+            state.results.push({
+                stage: state.stage,
+                num: trial.num,
+                voice: trial.voice,
+                task: trial.task ?? null,
+                rt,
+                numErrors: state.errorsInTrial,
+                isSwitch: trial.isSwitch
+            });
+
+            setTimeout(() => {
+                if (state.aborted) return;
+                btn.classList.remove('active-press');
+                
+                state.errorsInTrial = 0; 
+                state.currentTrial++;
+                
+                if (state.currentTrial < state.trials.length) render();
+                else advance();
+            }, 150); // 150ms igual ao acerto, mantendo o ritmo idêntico
+
+        } else {
+            // == TREINO (Feedback Punitivo/Pedagógico) ==
+            // Fica vermelho, treme a tela, toca o som e obriga a corrigir
+            btn.classList.add('fail');
             const icon = document.getElementById('feedback-icon');
-            if (icon) icon.classList.remove('shake');
-        }, 300);
+            if (icon) icon.classList.add('shake');
+            new Audio('src/audio/error.mp3').play().catch(() => {});
+
+            setTimeout(() => {
+                if (state.aborted) return;
+                btn.classList.remove('active-press', 'fail');
+                if (icon) icon.classList.remove('shake');
+            }, 300);
+        }
     }
 });
 
@@ -412,7 +456,7 @@ function advance() {
 
 function renderResults(container) {
     container.innerHTML = `
-        <div class="screen-container" style="text-align:center;">
+        <div class="screen-container" style="width: 95vw; max-width: 1350px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <h2 class="title">Teste Concluído</h2>
             <p style="margin:1rem 0;">Clique no botão abaixo para baixar o arquivo CSV com os resultados.</p>
             <button class="btn-action" onclick="downloadCSV()">Baixar Resultados (CSV)</button>
