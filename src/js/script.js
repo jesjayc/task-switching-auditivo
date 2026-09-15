@@ -495,7 +495,7 @@ async function sendResultsByEmail() {
 
     // 2. Envia para o Backend (que faz a ponte para o Resend)
     try {
-        // tem que por o URL ainda
+        // URL para o backend
         const response = await fetch('/api/enviar', {
             method: 'POST',
             headers: {

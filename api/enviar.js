@@ -24,14 +24,14 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: 'Pesquisa Task-Switching <onboarding@resend.dev>', 
+                from: 'Pesquisa Task-Switching AUDITIVO <onboarding@resend.dev>', 
                 to: ['EMAIL_DE_DESTINO_AQUI@gmail.com'], // <-- COLOCAR O EMAIL DE DESTINO
                 subject: `Resultados do Experimento - ${participante}`,
                 html: `<p>Olá! Seguem em anexo os resultados de <strong>${participante}</strong>.</p>`,
                 attachments: [
                     {
                         filename: `resultados-${participante}.csv`,
-                        content: dadosCSV // O Resend anexa o CSV automaticamente!
+                        content: dadosCSV // O Resend anexa o CSV
                     }
                 ]
             })
