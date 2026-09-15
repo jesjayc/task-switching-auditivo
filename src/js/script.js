@@ -392,47 +392,23 @@ window.addEventListener('keydown', (e) => {
 
     } else {
         // --- CENÁRIO 2: RESPOSTA INCORRETA ---
-        state.errorsInTrial++;
+        state.errorsInTrial++; // Registramos que hubo un error
 
-        if (isOfficialPhase) {
-            // == TESTE OFICIAL (Estéril e Silencioso) ==
-            // Grava o erro e avança sem piscar vermelho, sem tremer e sem som.
-            const rt = performance.now() - state.startTime;
-            state.results.push({
-                stage: state.stage,
-                num: trial.num,
-                voice: trial.voice,
-                task: trial.task ?? null,
-                rt,
-                numErrors: state.errorsInTrial,
-                isSwitch: trial.isSwitch
-            });
+        // AHORA: Tanto en la fase de TREINO como OFICIAL, mostramos el error
+        // y NO avanzamos al siguiente trial. El usuario debe corregir.
+        
+        btn.classList.add('fail');
+        const icon = document.getElementById('feedback-icon');
+        if (icon) icon.classList.add('shake');
+        
+        // Reproducimos el sonido de error
+        new Audio('src/audio/error.mp3').play().catch(() => {});
 
-            setTimeout(() => {
-                if (state.aborted) return;
-                btn.classList.remove('active-press');
-                
-                state.errorsInTrial = 0; 
-                state.currentTrial++;
-                
-                if (state.currentTrial < state.trials.length) render();
-                else advance();
-            }, 150); // 150ms igual ao acerto, mantendo o ritmo idêntico
-
-        } else {
-            // == TREINO (Feedback Punitivo/Pedagógico) ==
-            // Fica vermelho, treme a tela, toca o som e obriga a corrigir
-            btn.classList.add('fail');
-            const icon = document.getElementById('feedback-icon');
-            if (icon) icon.classList.add('shake');
-            new Audio('src/audio/error.mp3').play().catch(() => {});
-
-            setTimeout(() => {
-                if (state.aborted) return;
-                btn.classList.remove('active-press', 'fail');
-                if (icon) icon.classList.remove('shake');
-            }, 300);
-        }
+        setTimeout(() => {
+            if (state.aborted) return;
+            btn.classList.remove('active-press', 'fail');
+            if (icon) icon.classList.remove('shake');
+        }, 300);
     }
 });
 
@@ -458,8 +434,8 @@ function renderResults(container) {
     container.innerHTML = `
         <div class="screen-container" style="width: 95vw; max-width: 1350px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <h2 class="title">Teste Concluído</h2>
-            <p style="margin:1rem 0;">Clique no botão abaixo para baixar o arquivo CSV com os resultados.</p>
-            <button class="btn-action" onclick="downloadCSV()">Baixar Resultados (CSV)</button>
+            <p style="margin:1rem 0;">Clique no botão abaixo para enviar os resultados para o pesquisador.</p>
+            <button id="btn-enviar" class="btn-action" onclick="sendResultsByEmail()">Enviar Resultados</button>
             <br><br>
             <button class="btn-action" style="background: var(--bg-tertiary); margin-top: 10px;" onclick="location.reload()">Reiniciar</button>
         </div>`;
@@ -492,7 +468,12 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-function downloadCSV() {
+async function sendResultsByEmail() {
+    const btn = document.getElementById('btn-enviar');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Enviando...';
+
+    // 1. Gera os dados em formato CSV, igual antes
     const fields = ['indice', 'etapa', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
     const officialResults = state.results.filter(r => r.stage.endsWith('_OFICIAL'));
     const rows = officialResults.map((r, i) => {
@@ -510,16 +491,35 @@ function downloadCSV() {
     });
     const headerRow = ['campo', ...rows.map((_, i) => i + 1)];
     const fieldRows = fields.map((field, fi) => [field, ...rows.map(row => row[fi])]);
-    const csv = [headerRow, ...fieldRows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `resultados-task-switching-auditivo-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const csvContent = [headerRow, ...fieldRows].map(row => row.join(',')).join('\n');
+
+    // 2. Envia para o Backend (que faz a ponte para o Resend)
+    try {
+        // tem que por o URL ainda
+        const response = await fetch('/api/enviar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                dadosCSV: csvContent,
+                participante: `Participante-${Date.now()}` // ou alguma outra ID que a gente possa usar
+            })
+        });
+
+        if (response.ok) {
+            btn.innerHTML = '✅ Enviado com Sucesso!';
+            btn.style.background = 'var(--accent)';
+            btn.style.color = '#000';
+        } else {
+            throw new Error('Erro no servidor ao enviar o e-mail');
+        }
+    } catch (error) {
+        console.error("Erro ao enviar dados:", error);
+        btn.innerHTML = '❌ Erro ao enviar. Tentar novamente';
+        btn.style.background = 'var(--error)';
+        btn.disabled = false;
+    }
 }
 
 render();
