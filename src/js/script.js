@@ -11,7 +11,7 @@ const state = {
     audioTest: { playing: false, selected: [], target: [1, 7, 9] }
 };
 
-const ABORT_CODE = "end42";
+const ABORT_CODE = "0001";
 let abortBuffer = "";
 let abortBufferTimer = null;
 
@@ -392,10 +392,9 @@ window.addEventListener('keydown', (e) => {
 
     } else {
         // --- CENÁRIO 2: RESPOSTA INCORRETA ---
-        state.errorsInTrial++; // Registramos que hubo un error
+        state.errorsInTrial++; // Registramos que ocorreu um erro
 
-        // AHORA: Tanto en la fase de TREINO como OFICIAL, mostramos el error
-        // y NO avanzamos al siguiente trial. El usuario debe corregir.
+        // Mostra-se o erro e não avançamos para o próximo trial. O usuário deve corrigir.
         
         btn.classList.add('fail');
         const icon = document.getElementById('feedback-icon');
