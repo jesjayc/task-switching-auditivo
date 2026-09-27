@@ -15,6 +15,9 @@ export default async function handler(req, res) {
     const { dadosCSV, participante } = req.body;
 
     try {
+        const csvBuffer = Buffer.from('\uFEFF' + dadosCSV, 'utf-8');
+        const base64CSV = csvBuffer.toString('base64');
+
         // 3. Pede para o Resend enviar o e-mail
         const respostaResend = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -25,13 +28,13 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 from: 'Pesquisa Task-Switching AUDITIVO <onboarding@resend.dev>', 
-                to: ['EMAIL_DE_DESTINO_AQUI@gmail.com'], // <-- COLOCAR O EMAIL DE DESTINO
+                to: ['bafeppgufcspa@gmail.com'],
                 subject: `Resultados do Experimento - ${participante}`,
                 html: `<p>Olá! Seguem em anexo os resultados de <strong>${participante}</strong>.</p>`,
                 attachments: [
                     {
                         filename: `resultados-${participante}.csv`,
-                        content: dadosCSV // O Resend anexa o CSV
+                        content: base64CSV
                     }
                 ]
             })
