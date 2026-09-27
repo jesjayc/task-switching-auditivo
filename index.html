@@ -10,6 +10,21 @@
     <div id="app">
         <div id="screen-container"></div>
     </div>
+    
+    <!-- Tela Inicial: Identificação -->
+    <template id="name-screen-template">
+        <div class="screen-container">
+            <h1 class="title" style="margin-bottom: 0;">Bem-vindo(a) ao Experimento</h1>
+            <h2 class="title" style="color: var(--text-light); font-size: 1.8rem; margin-top: 10px;">Task Switching Auditivo</h2>
+            <p style="margin-bottom: 2rem; font-size: 1.1rem; color: var(--text-secondary);">Para começar, por favor, digite seu ID ou nome.</p>
+            
+            <input type="text" id="participant-name-input" class="input-name" placeholder="Digite seu nome ou ID..." autocomplete="off">
+            
+            <div class="start-prompt" style="margin-top: 1rem; width: 100%; max-width: 400px; margin: 0 auto;">
+                <button id="submit-name-button" class="btn-main">AVANÇAR PARA TESTE DE ÁUDIO</button>
+            </div>
+        </div>
+    </template>
 
     <!-- Tela de Teste de Áudio -->
     <template id="audio-test-template">

@@ -40,6 +40,30 @@ body {
     font-weight: 800;
 }
 
+/* --- Estilo do Input de Identificação --- */
+.input-name {
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    color: var(--text-light);
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    font-size: 1.25rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 1.5rem auto;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+    display: block;
+}
+.input-name:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+.input-name::placeholder {
+    color: var(--text-secondary);
+}
+
 .instructions-content { text-align: left; line-height: 1.6; margin-bottom: 20px; font-size: 1.05rem;}
 
 /* Estilo Tátil do Teclado KBD */

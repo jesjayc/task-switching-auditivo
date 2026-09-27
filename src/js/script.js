@@ -1,5 +1,6 @@
 const state = {
-    stage: 'AUDIO_TEST', // Teste voltou a começar na tela de teste de áudio
+    stage: 'NAME_SCREEN', // O teste agora começa pedindo o nome
+    participantId: '',
     currentTrial: 0,
     trials: [],
     results: [],
@@ -133,7 +134,10 @@ function render() {
     const container = document.getElementById('screen-container');
     container.innerHTML = '';
 
-    if (state.stage === 'AUDIO_TEST') {
+    if (state.stage === 'NAME_SCREEN') {
+        renderNameScreen(container);
+    }
+    else if (state.stage === 'AUDIO_TEST') {
         renderAudioTest(container);
     }
     else if (state.stage.includes('_INSTR') || state.stage === 'POSITIONING') {
@@ -151,6 +155,37 @@ function render() {
     else if (state.stage === 'RESULTS') {
         renderResults(container);
     }
+}
+
+// --- TELA DE IDENTIFICAÇÃO NO INÍCIO ---
+function renderNameScreen(container) {
+    const template = document.getElementById('name-screen-template');
+    container.innerHTML = template.innerHTML;
+    
+    const input = container.querySelector('#participant-name-input');
+    const btn = container.querySelector('#submit-name-button');
+    
+    input.focus();
+    
+    const submitName = () => {
+        let val = input.value.trim();
+        
+        // Trava de segurança: se estiver vazio, avisa e cancela o avanço
+        if (!val) {
+            alert("Por favor, digite seu nome ou ID para começar o teste.");
+            input.focus();
+            return;
+        }
+        
+        state.participantId = val;
+        state.stage = 'AUDIO_TEST';
+        render();
+    };
+    
+    btn.onclick = submitName;
+    input.onkeypress = (e) => { 
+        if (e.key === 'Enter') submitName(); 
+    };
 }
 
 function renderAudioTest(container) {
@@ -183,7 +218,6 @@ function renderAudioTest(container) {
         grid.appendChild(btn);
     }
 
-    
     btnPlay.onclick = () => {
         if(state.audioTest.playing) return;
         state.audioTest.playing = true;
@@ -193,12 +227,12 @@ function renderAudioTest(container) {
         
         playAudio([1, 7, 9], 'masculina', () => {
             state.audioTest.playing = false;
-            state.audioTest.played = true; // <--- Usuário pode clicar na sequência de números agora
+            state.audioTest.played = true; 
             
             btnPlay.disabled = false; 
             btnPlay.innerHTML = '▶ REPRODUZIR NOVAMENTE';
             
-            checkAudioTest(feedback, btnNext); // Revalida a seleção
+            checkAudioTest(feedback, btnNext); 
         });
     };
 
@@ -208,8 +242,6 @@ function renderAudioTest(container) {
 function checkAudioTest(feedback, btnNext) {
     if(state.audioTest.selected.length === 3) {
         const isCorrect = state.audioTest.selected.every(n => state.audioTest.target.includes(n));
-        
-        // Agora exige que esteja correto E que o áudio já tenha tocado
         if(isCorrect && state.audioTest.played) { 
             feedback.textContent = 'Perfeito! Áudio validado.';
             feedback.style.color = 'var(--accent)';
@@ -250,7 +282,6 @@ function renderInstructions(container) {
     }
 }
 
-// Lógica Unificada para Avançar as Telas (Mouse ou Espaço)
 function handleSpaceOrClick() {
     if (state.stage === 'AUDIO_TEST') {
         const btnNext = document.getElementById('btn-start-instructions');
@@ -306,7 +337,6 @@ function getKeyHintsHTML(stage, returnObject = false) {
     return aHint + lHint;
 }
 
-// Adicionado suporte a callback (onComplete) no final do áudio
 function playAudio(nums, voice, onComplete = null) {
     if (state.aborted) return;
     if (!Array.isArray(nums)) nums = [nums];
@@ -343,7 +373,6 @@ function playAudio(nums, voice, onComplete = null) {
 window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
 
-    // Novo suporte à barra de espaço global
     if (key === ' ' && (state.stage.includes('_INSTR') || state.stage === 'POSITIONING' || state.stage === 'AUDIO_TEST')) {
         handleSpaceOrClick();
         return;
@@ -355,17 +384,11 @@ window.addEventListener('keydown', (e) => {
     const btn = document.getElementById(`key-${key}`);
     const trial = state.trials[state.currentTrial];
     const isCorrect = validate(trial, key);
-
-    // O botão afunda (feedback tátil/motor), essencial para UX básica
     if (btn) btn.classList.add('active-press');
 
-    // Identifica se estamos valendo nota (Oficial) ou não (Treino)
     const isOfficialPhase = state.stage.endsWith('_OFICIAL');
 
     if (isCorrect) {
-        // --- CENÁRIO 1: RESPOSTA CORRETA ---
-        
-        // Só acende o verde (success) se for TREINO
         if (!isOfficialPhase) {
             btn.classList.add('success'); 
         }
@@ -391,16 +414,11 @@ window.addEventListener('keydown', (e) => {
         }, 150);
 
     } else {
-        // --- CENÁRIO 2: RESPOSTA INCORRETA ---
-        state.errorsInTrial++; // Registramos que ocorreu um erro
-
-        // Mostra-se o erro e não avançamos para o próximo trial. O usuário deve corrigir.
-        
+        state.errorsInTrial++; 
         btn.classList.add('fail');
         const icon = document.getElementById('feedback-icon');
         if (icon) icon.classList.add('shake');
         
-        // Reproducimos el sonido de error
         new Audio('src/audio/error.mp3').play().catch(() => {});
 
         setTimeout(() => {
@@ -429,18 +447,27 @@ function advance() {
     render();
 }
 
+// --- TELA FINAL (Envio Automático) ---
 function renderResults(container) {
     container.innerHTML = `
         <div class="screen-container" style="width: 95vw; max-width: 1350px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <h2 class="title">Teste Concluído</h2>
-            <p style="margin:1rem 0;">Clique no botão abaixo para enviar os resultados para o pesquisador.</p>
-            <button id="btn-enviar" class="btn-action" onclick="sendResultsByEmail()">Enviar Resultados</button>
-            <br><br>
-            <button class="btn-action" style="background: var(--bg-tertiary); margin-top: 10px;" onclick="location.reload()">Reiniciar</button>
+            <h1 class="title" style="font-size: 2.25rem;">Você finalizou o teste!</h1>
+            <p id="email-status-text" style="margin-bottom: 2.5rem; font-weight: 600; color: var(--text-secondary); font-size: 1.1rem;">⏳ Processando resultados...</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto;">
+                <button id="copy-bkp-button" class="btn-action" onclick="copyToClipboard()">COPIAR DADOS BRUTOS (BKP)</button>
+                <button id="exit-button" class="btn-action" style="background: var(--bg-tertiary);" onclick="location.reload()">SAIR</button>
+            </div>
         </div>`;
+    
+    // Dispara o envio silencioso assim que a tela de finalização abre
+    sendResultsByEmail();
 }
 
 function abortTest() {
+    // Bloqueia aborto se já estiver na tela de Nome, Resultados ou Instruções
+    if (state.stage === 'RESULTS' || state.stage === 'NAME_SCREEN' || state.stage.includes('_INSTR')) return;
+
     if (!state.results.length) {
         location.reload();
         return;
@@ -453,7 +480,7 @@ function abortTest() {
         state.currentAudio = null;
     }
     state.stage = 'RESULTS';
-    render();
+    render(); // O renderResults automaticamente fará o disparo
 }
 
 window.addEventListener('keydown', (e) => {
@@ -467,12 +494,13 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+// --- DISPARADOR DE EMAIL (BACKEND) ---
 async function sendResultsByEmail() {
-    const btn = document.getElementById('btn-enviar');
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Enviando...';
+    const statusText = document.getElementById('email-status-text');
+    if(!statusText) return;
+    statusText.textContent = '⏳ Enviando resultados para o servidor...';
+    statusText.style.color = 'var(--text-secondary)';
 
-    // 1. Gera os dados em formato CSV, igual antes
     const fields = ['indice', 'etapa', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
     const officialResults = state.results.filter(r => r.stage.endsWith('_OFICIAL'));
     const rows = officialResults.map((r, i) => {
@@ -488,37 +516,63 @@ async function sendResultsByEmail() {
             r.isSwitch ? 'sim' : 'nao'
         ];
     });
+    
     const headerRow = ['campo', ...rows.map((_, i) => i + 1)];
     const fieldRows = fields.map((field, fi) => [field, ...rows.map(row => row[fi])]);
     const csvContent = [headerRow, ...fieldRows].map(row => row.join(',')).join('\n');
 
-    // 2. Envia para o Backend (que faz a ponte para o Resend)
     try {
-        // URL para o backend
-        const response = await fetch('/api/enviar', {
+        // Atenção: A URL de chamada aqui deve casar com o nome do arquivo backend criado na Vercel
+        const response = await fetch('/api/enviar_2', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 dadosCSV: csvContent,
-                participante: `Participante-${Date.now()}` // ou alguma outra ID que a gente possa usar
+                participante: state.participantId
             })
         });
 
         if (response.ok) {
-            btn.innerHTML = '✅ Enviado com Sucesso!';
-            btn.style.background = 'var(--accent)';
-            btn.style.color = '#000';
+            statusText.innerHTML = '✅ Resultados salvos e enviados com sucesso!';
+            statusText.style.color = 'var(--cyan)';
         } else {
             throw new Error('Erro no servidor ao enviar o e-mail');
         }
     } catch (error) {
         console.error("Erro ao enviar dados:", error);
-        btn.innerHTML = '❌ Erro ao enviar. Tentar novamente';
-        btn.style.background = 'var(--error)';
-        btn.disabled = false;
+        statusText.innerHTML = '❌ Erro no envio automático. Por favor, clique em "COPIAR DADOS BRUTOS" para não perder os dados.';
+        statusText.style.color = 'var(--error)';
     }
+}
+
+// --- FUNÇÃO BKP ---
+function copyToClipboard() {
+    const fields = ['indice', 'etapa', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
+    const officialResults = state.results.filter(r => r.stage.endsWith('_OFICIAL'));
+    const rows = officialResults.map((r, i) => {
+        const etapa = r.stage.replace('STAGE_', '').replace('_OFICIAL', '');
+        return [
+            i + 1,
+            etapa,
+            r.num,
+            r.voice,
+            r.task ?? '',
+            Math.round(r.rt),
+            r.numErrors,
+            r.isSwitch ? 'sim' : 'nao'
+        ];
+    });
+    
+    let clipText = fields.join('\t') + '\n';
+    rows.forEach(row => { clipText += row.join('\t') + '\n'; });
+    
+    navigator.clipboard.writeText(clipText).then(() => {
+        alert("Resultados copiados! Cole (Ctrl+V) no Excel.");
+    }).catch(err => {
+        alert("Erro ao copiar.");
+    });
 }
 
 render();
