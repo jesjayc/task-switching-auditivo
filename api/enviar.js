@@ -1,28 +1,22 @@
 export default async function handler(req, res) {
-    // 1. Libera o CORS (frontend <-> backend)
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,POST');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Se o navegador estiver apenas checando a permissão (CORS), belezinha
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
     }
 
-    // 2. Recebe os dados do script.js
     const { dadosCSV, participante } = req.body;
 
     try {
-        const csvBuffer = Buffer.from('\uFEFF' + dadosCSV, 'utf-8');
-        const base64CSV = csvBuffer.toString('base64');
-
-        // 3. Pede para o Resend enviar o e-mail
+        const conteudoCSV = '\uFEFF' + dadosCSV;
+        
         const respostaResend = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
-                // A Vercel vai injetar a chave aqui
                 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
                 'Content-Type': 'application/json'
             },
@@ -34,7 +28,7 @@ export default async function handler(req, res) {
                 attachments: [
                     {
                         filename: `resultados-${participante}.csv`,
-                        content: base64CSV
+                        content: conteudoCSV
                     }
                 ]
             })
