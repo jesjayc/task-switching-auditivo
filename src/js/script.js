@@ -522,8 +522,7 @@ async function sendResultsByEmail() {
     const csvContent = [headerRow, ...fieldRows].map(row => row.join(',')).join('\n');
 
     try {
-        // Atenção: A URL de chamada aqui deve casar com o nome do arquivo backend criado na Vercel
-        const response = await fetch('/api/enviar_2', { 
+        const response = await fetch('/api/enviar', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
