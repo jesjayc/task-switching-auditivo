@@ -503,6 +503,8 @@ async function sendResultsByEmail() {
 
     const fields = ['indice', 'etapa', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
     const officialResults = state.results.filter(r => r.stage.endsWith('_OFICIAL'));
+    
+    // Constrói a tabela "DE PÉ", tem que usar MAP
     const rows = officialResults.map((r, i) => {
         const etapa = r.stage.replace('STAGE_', '').replace('_OFICIAL', '');
         return [
@@ -514,19 +516,16 @@ async function sendResultsByEmail() {
             Math.round(r.rt),
             r.numErrors,
             r.isSwitch ? 'sim' : 'nao'
-        ];
+        ].join(';');
     });
     
-    const headerRow = ['campo', ...rows.map((_, i) => i + 1)];
-    const fieldRows = fields.map((field, fi) => [field, ...rows.map(row => row[fi])]);
-    const csvContent = [headerRow, ...fieldRows].map(row => row.join(',')).join('\n');
+    const headerRow = fields.join(';');
+    const csvContent = [headerRow, ...rows].join('\n');
 
     try {
         const response = await fetch('/api/enviar', { 
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 dadosCSV: csvContent,
                 participante: state.participantId
