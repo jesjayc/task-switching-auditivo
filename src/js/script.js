@@ -373,13 +373,16 @@ function playAudio(nums, voice, onComplete = null) {
 window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
 
-    if (key === ' ' && (state.stage.includes('_INSTR') || state.stage === 'POSITIONING' || state.stage === 'AUDIO_TEST')) {
-        handleSpaceOrClick();
+    // Teste de áudio, instruções, preparação e transição avançam com A ou L
+    if ((key === 'a' || key === 'l') && (state.stage.includes('_INSTR') || state.stage === 'POSITIONING' || state.stage === 'AUDIO_TEST')) {
+        if (!e.repeat) handleSpaceOrClick();
         return;
     }
 
     if (!state.stage.startsWith('STAGE_') || state.stage.includes('_INSTR')) return;
     if (key !== 'a' && key !== 'l') return;
+    // Ignora tecla segurada (A/L também iniciam a etapa)
+    if (e.repeat) return;
 
     const btn = document.getElementById(`key-${key}`);
     const trial = state.trials[state.currentTrial];
@@ -451,13 +454,8 @@ function advance() {
 function renderResults(container) {
     container.innerHTML = `
         <div class="screen-container" style="width: 95vw; max-width: 1350px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <h1 class="title" style="font-size: 2.25rem;">Você finalizou o teste!</h1>
-            <p id="email-status-text" style="margin-bottom: 2.5rem; font-weight: 600; color: var(--text-secondary); font-size: 1.1rem;">⏳ Processando resultados...</p>
-            
-            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto;">
-                <button id="copy-bkp-button" class="btn-action" onclick="copyToClipboard()">COPIAR DADOS BRUTOS (BKP)</button>
-                <button id="exit-button" class="btn-action" style="background: var(--bg-tertiary);" onclick="location.reload()">SAIR</button>
-            </div>
+            <h1 class="title" style="font-size: 2.25rem;">Teste finalizado.</h1>
+            <p id="email-status-text" style="font-weight: 600; color: var(--text-secondary); font-size: 1.1rem;">⏳ Processando resultados...</p>
         </div>`;
     
     // Dispara o envio silencioso assim que a tela de finalização abre
@@ -540,37 +538,9 @@ async function sendResultsByEmail() {
         }
     } catch (error) {
         console.error("Erro ao enviar dados:", error);
-        statusText.innerHTML = '❌ Erro no envio automático. Por favor, clique em "COPIAR DADOS BRUTOS" para não perder os dados.';
+        statusText.innerHTML = '❌ Erro no envio automático. Por favor, avise o avaliador.';
         statusText.style.color = 'var(--error)';
     }
-}
-
-// --- FUNÇÃO BKP ---
-function copyToClipboard() {
-    const fields = ['indice', 'etapa', 'numero', 'voz', 'tarefa', 'tempo_reacao_ms', 'numero_erros', 'eh_troca'];
-    const officialResults = state.results.filter(r => r.stage.endsWith('_OFICIAL'));
-    const rows = officialResults.map((r, i) => {
-        const etapa = r.stage.replace('STAGE_', '').replace('_OFICIAL', '');
-        return [
-            i + 1,
-            etapa,
-            r.num,
-            r.voice,
-            r.task ?? '',
-            Math.round(r.rt),
-            r.numErrors,
-            r.isSwitch ? 'sim' : 'nao'
-        ];
-    });
-    
-    let clipText = fields.join('\t') + '\n';
-    rows.forEach(row => { clipText += row.join('\t') + '\n'; });
-    
-    navigator.clipboard.writeText(clipText).then(() => {
-        alert("Resultados copiados! Cole (Ctrl+V) no Excel.");
-    }).catch(err => {
-        alert("Erro ao copiar.");
-    });
 }
 
 render();
