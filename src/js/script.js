@@ -463,13 +463,16 @@ function renderResults(container) {
 }
 
 function abortTest() {
-    // Bloqueia aborto se já estiver na tela de Nome, Resultados ou Instruções
     if (state.stage === 'RESULTS' || state.stage === 'NAME_SCREEN' || state.stage.includes('_INSTR')) return;
 
-    if (!state.results.length) {
+    // Tem pelo menos uma resposta de fase oficial?
+    const temOficial = state.results.some(r => r.stage.endsWith('_OFICIAL'));
+
+    if (!temOficial) {
         location.reload();
         return;
     }
+
     state.aborted = true;
     if (state.currentAudio) {
         state.currentAudio.onended = null;
@@ -478,7 +481,7 @@ function abortTest() {
         state.currentAudio = null;
     }
     state.stage = 'RESULTS';
-    render(); // O renderResults automaticamente fará o disparo
+    render();
 }
 
 window.addEventListener('keydown', (e) => {
